@@ -1,0 +1,61 @@
+version: "3.7"
+
+services:
+  kafka:
+    image: confluentinc/cp-kafka:5.3.1
+    restart: on-failure
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  zookeeper:
+    image: zookeeper:3.4.9
+    restart: on-failure
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      ZOO_SERVERS: server.1=zookeeper:2888:3888
+  mysql:
+    image: mysql:5.7
+    restart: on-failure
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sepa
+      MYSQL_USER: sepa
+      MYSQL_PASSWORD: sepa
+  ftp:
+    image: stilliard/pure-ftpd:hardened
+    restart: on-failure
+    ports:
+      - "21:21"
+      - "31000:31000"
+      - "31001:31001"
+      - "31002:31002"
+      - "31003:31003"
+      - "31004:31004"
+      - "31005:31005"
+      - "31006:31006"
+      - "31007:31007"
+      - "31008:31008"
+      - "31009:31009"
+    environment:
+      FTP_USER_NAME: sepa
+      FTP_USER_PASS: sepa
+      FTP_USER_HOME: "/home/sepa/ftp"
+      PUBLICHOST: localhost
+      FTP_PASSIVE_PORTS: "31000:31009"
+    volumes:
+      - "./ftp_root:/home/sepa/ftp"

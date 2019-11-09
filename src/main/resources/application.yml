@@ -1,0 +1,11 @@
+ftp:
+  server: "localhost"
+  port: 21
+  user: "sepa"
+  password: "sepa"
+kafka:
+  brokers: "kafka:9092"
+  clientId: "transactions"
+fileProcessing:
+  job:
+    schedule: "*/30 * * * * *"

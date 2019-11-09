@@ -1,0 +1,3 @@
+logging:
+  level:
+    org.apache.commons.net.ftp.FTPClient: DEBUG
